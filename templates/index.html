@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ATS Resume Scanner - AI Powered</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #2d3748;
+            --text-secondary: #718096;
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --shadow-xl: 0 35px 60px -12px rgba(0, 0, 0, 0.3);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow-x: hidden;
+        }
+        
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 20s infinite linear;
+        }
+        
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+        
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 80%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(120deg); }
+            66% { transform: translateY(30px) rotate(240deg); }
+        }
+        
+        .main-container {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 30px;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            z-index: 10;
+            animation: slideUp 0.8s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .hero-section {
+            text-align: center;
+            padding: 3rem 0;
+            position: relative;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            animation: titleGlow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes titleGlow {
+            from { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3)); }
+            to { filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.6)); }
+        }
+        
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 1rem 0;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .role-section {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            position: relative;
+            overflow: visible;
+        }
+        
+        .role-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .autocomplete-container {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .role-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #2d3748 !important;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .role-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            transform: scale(1.02);
+        }
+        
+        .autocomplete-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            border-radius: 15px;
+            margin-top: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 9999;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+            animation: dropDown 0.3s ease-out;
+        }
+        
+        @keyframes dropDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .autocomplete-suggestion {
+            padding: 15px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.2s ease;
+            font-weight: 500;
+            color: #2d3748;
+        }
+        
+        .autocomplete-suggestion:hover,
+        .autocomplete-suggestion.highlighted {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            transform: translateX(5px);
+        }
+        
+        .upload-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .upload-section {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .upload-area {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            border: 2px dashed rgba(255, 255, 255, 0.4);
+            border-radius: 20px;
+            padding: 3rem 2rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .upload-area:hover::before {
+            opacity: 1;
+        }
+        
+        .upload-area:hover {
+            transform: translateY(-10px);
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .upload-area.dragover {
+            border-color: #4facfe;
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.2) 0%, rgba(0, 242, 254, 0.2) 100%);
+            transform: scale(1.05);
+        }
+        
+        .upload-icon {
+            font-size: 4rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1rem;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+        
+        .modern-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 15px;
+            padding: 1rem 2rem;
+            font-weight: 600;
+            color: white;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .modern-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .modern-btn:hover::before {
+            left: 100%;
+        }
+        
+        .modern-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.4);
+        }
+        
+        .modern-btn-success {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .modern-btn-success:hover {
+            box-shadow: 0 15px 30px rgba(79, 172, 254, 0.4);
+        }
+        
+        .text-input-area {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .modern-textarea {
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 1rem;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .modern-textarea:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        
+        .loading-spinner {
+            display: none;
+            padding: 3rem;
+        }
+        
+        .modern-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .score-circle {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0 auto;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            animation: scoreReveal 1s ease-out;
+        }
+        
+        @keyframes scoreReveal {
+            from {
+                transform: scale(0) rotate(180deg);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+        }
+        
+        .results-section {
+            animation: resultsSlideIn 0.8s ease-out;
+        }
+        
+        @keyframes resultsSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .factor-badge {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            margin: 0.25rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .factor-present {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .factor-missing {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+        
+        @keyframes progressLoad {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+        
+        .factors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .factor-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .factor-item:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .suggestions-grid {
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .suggestion-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-left: 4px solid #4facfe;
+            transition: all 0.3s ease;
+        }
+        
+        .suggestion-item:hover {
+            transform: translateX(10px);
+            background: rgba(255, 255, 255, 0.15);
+            border-left-color: #00f2fe;
+        }
+        
+        .score-excellent { 
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+        }
+        .score-good { background: linear-gradient(135deg, #ffc107, #fd7e14); }
+        .score-poor { background: linear-gradient(135deg, #dc3545, #e83e8c); }
+        
+        /* Enhanced AI Insights Styling */
+        .insights-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .insights-tab {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            padding: 0.8rem 1.5rem;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .insights-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .insights-tab:hover::before {
+            left: 100%;
+        }
+        
+        .insights-tab.active {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+        
+        .insights-tab:hover {
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.4);
+            color: white;
+        }
+        
+        .insights-content {
+            display: none;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        .insights-content.active {
+            display: block;
+        }
+        
+        .insight-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .insight-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            transition: width 0.3s ease;
+        }
+        
+        .insight-card:hover {
+            transform: translateX(10px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .insight-card:hover::before {
+            width: 8px;
+        }
+        
+        .insight-priority {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .priority-high {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        
+        .priority-medium {
+            background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+            color: white;
+        }
+        
+        .priority-low {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+        
+        .insight-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .insight-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .insight-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+        }
+        
+        .insight-description {
+            color: rgba(255, 255, 255, 0.9);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+        
+        .insight-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .insight-action {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 0.5rem 1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+        }
+        
+        .insight-action:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .progress-indicator {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        
+        .progress-bar-custom {
+            height: 100%;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 4px;
+            transition: width 1s ease-out;
+        }
+        
+        .factor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .factor-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .factor-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .factor-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .factor-score {
+            font-size: 2rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+        
+        .factor-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .factor-details {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+        }
+        
+        .suggestion-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #007bff;
+        }
+        
+        .factor-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 3px;
+        }
+        
+        .factor-present {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .factor-missing {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .loading-spinner {
+            display: none;
+        }
+        
+        .text-input-area {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Background Shapes -->
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-11 col-xl-10">
+                <div class="main-container p-5">
+                    <!-- Hero Section -->
+                    <div class="hero-section">
+                        <h1 class="hero-title">
+                            <i class="fas fa-brain me-3"></i>ATS Resume Scanner
+                        </h1>
+                        <p class="hero-subtitle">
+                            AI-Powered Resume Analysis • Instant ATS Scoring • Smart Optimization
+                        </p>
+                    </div>
+
+                    <!-- Role Selection Section -->
+                    <div class="role-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-briefcase me-2"></i>Target Role
+                        </h2>
+                        <p class="text-center text-white mb-4 opacity-75">
+                            Tell us what position you're applying for to get personalized insights
+                        </p>
+                        <div class="autocomplete-container">
+                            <input type="text" id="roleInput" class="role-input" 
+                                   placeholder="Start typing a job role (e.g., Software Engineer)..."
+                                   autocomplete="off">
+                            <div id="roleSuggestions" class="autocomplete-suggestions"></div>
+                        </div>
+                    </div>
+
+                    <!-- Upload Section -->
+                    <div class="upload-section">
+                        <div class="glass-card">
+                            <h3 class="section-title">
+                                <i class="fas fa-cloud-upload-alt me-2"></i>Upload Resume
+                            </h3>
+                            <div class="upload-area" id="uploadArea">
+                                <i class="fas fa-file-upload upload-icon"></i>
+                                <h4 class="text-white mb-3">Drop your resume here</h4>
+                                <p class="text-white opacity-75 mb-4">Supports PDF, DOCX, and TXT files</p>
+                                <input type="file" id="resumeFile" accept=".pdf,.docx,.txt" style="display: none;">
+                                <button class="modern-btn" onclick="document.getElementById('resumeFile').click()">
+                                    <i class="fas fa-folder-open me-2"></i>Browse Files
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card">
+                            <h3 class="section-title">
+                                <i class="fas fa-keyboard me-2"></i>Paste Text
+                            </h3>
+                            <div class="text-input-area">
+                                <textarea id="resumeText" class="modern-textarea w-100" rows="8" 
+                                    placeholder="Paste your resume text here for instant analysis..."></textarea>
+                                <button class="modern-btn modern-btn-success w-100 mt-3" onclick="analyzeText()">
+                                    <i class="fas fa-magic me-2"></i>Analyze with AI
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Loading Spinner -->
+                    <div class="text-center loading-spinner" id="loadingSpinner">
+                        <div class="glass-card">
+                            <div class="modern-spinner"></div>
+                            <h4 class="text-white mb-2">Analyzing with AI</h4>
+                            <p class="text-white opacity-75">Our advanced algorithms are scanning your resume...</p>
+                            <div class="progress mt-3" style="height: 6px; background: rgba(255,255,255,0.2);">
+                                <div class="progress-bar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); animation: progressLoad 3s ease-in-out infinite;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div id="results" class="results-section" style="display: none;">
+                        <div class="glass-card mt-5">
+                            <h2 class="section-title mb-5">
+                                <i class="fas fa-chart-line me-2"></i>Analysis Results
+                            </h2>
+                            
+                            <!-- Score Section -->
+                            <div class="row mb-5">
+                                <div class="col-lg-4 text-center mb-4">
+                                    <h3 class="text-white mb-4">ATS Score</h3>
+                                    <div id="scoreCircle" class="score-circle">
+                                        <span id="scoreValue">0</span>/100
+                                    </div>
+                                    <p id="scoreDescription" class="text-white mt-3 opacity-75"></p>
+                                </div>
+                                
+                                <div class="col-lg-8">
+                                    <h3 class="text-white mb-4">Analysis Breakdown</h3>
+                                    <div id="factorsContainer" class="factors-grid">
+                                        <!-- Factors will be populated here -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- AI Suggestions Section -->
+                            <div class="suggestions-section">
+                                <h3 class="text-white mb-4">
+                                    <i class="fas fa-lightbulb me-2"></i>AI-Powered Recommendations
+                                </h3>
+                                <div id="suggestionsContainer" class="suggestions-grid">
+                                    <!-- Suggestions will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Job roles for autocomplete
+        const jobRoles = [
+            'Software Engineer', 'Senior Software Engineer', 'Lead Software Engineer',
+            'Frontend Developer', 'Backend Developer', 'Full Stack Developer',
+            'Data Scientist', 'Senior Data Scientist', 'Data Analyst',
+            'Product Manager', 'Senior Product Manager', 'Product Owner',
+            'Marketing Manager', 'Digital Marketing Manager', 'Content Marketing Manager',
+            'Sales Representative', 'Sales Manager', 'Account Manager',
+            'Business Analyst', 'Senior Business Analyst', 'Systems Analyst',
+            'Project Manager', 'Senior Project Manager', 'Program Manager',
+            'UI/UX Designer', 'Graphic Designer', 'Web Designer',
+            'DevOps Engineer', 'Cloud Engineer', 'Site Reliability Engineer',
+            'Quality Assurance Engineer', 'Test Engineer', 'Automation Engineer',
+            'Cybersecurity Analyst', 'Information Security Analyst',
+            'Database Administrator', 'System Administrator', 'Network Administrator',
+            'Machine Learning Engineer', 'AI Engineer', 'Research Scientist',
+            'Technical Writer', 'Documentation Specialist',
+            'HR Manager', 'Recruiter', 'Talent Acquisition Specialist',
+            'Financial Analyst', 'Accountant', 'Finance Manager',
+            'Operations Manager', 'Supply Chain Manager', 'Logistics Coordinator',
+            'Customer Success Manager', 'Customer Support Representative',
+            'Consultant', 'Business Consultant', 'Management Consultant'
+        ];
+
+        // File upload handling
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('resumeFile');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const results = document.getElementById('results');
+        const roleInput = document.getElementById('roleInput');
+        const roleSuggestions = document.getElementById('roleSuggestions');
+        
+        let currentHighlightIndex = -1;
+        let filteredRoles = [];
+        
+        // Autocomplete functionality
+        if (roleInput && roleSuggestions) {
+            console.log('Autocomplete elements found, setting up event listeners');
+            
+            roleInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                console.log('Input event triggered, query:', query);
+                currentHighlightIndex = -1;
+                
+                if (query.length === 0) {
+                    hideSuggestions();
+                    return;
+                }
+                
+                filteredRoles = jobRoles.filter(role => 
+                    role.toLowerCase().includes(query)
+                ).slice(0, 8); // Limit to 8 suggestions
+                
+                console.log('Filtered roles:', filteredRoles);
+                
+                if (filteredRoles.length > 0) {
+                    showSuggestions(filteredRoles);
+                } else {
+                    hideSuggestions();
+                }
+            });
+        } else {
+            console.error('Autocomplete elements not found:', { roleInput, roleSuggestions });
+        }
+        
+        roleInput.addEventListener('keydown', function(e) {
+            const suggestions = roleSuggestions.querySelectorAll('.autocomplete-suggestion');
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                currentHighlightIndex = Math.min(currentHighlightIndex + 1, suggestions.length - 1);
+                updateHighlight(suggestions);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                currentHighlightIndex = Math.max(currentHighlightIndex - 1, -1);
+                updateHighlight(suggestions);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (currentHighlightIndex >= 0 && suggestions[currentHighlightIndex]) {
+                    selectSuggestion(suggestions[currentHighlightIndex].textContent);
+                }
+            } else if (e.key === 'Escape') {
+                hideSuggestions();
+            }
+        });
+        
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!roleInput.contains(e.target) && !roleSuggestions.contains(e.target)) {
+                hideSuggestions();
+            }
+        });
+        
+        function showSuggestions(roles) {
+            console.log('showSuggestions called with:', roles);
+            if (!roleSuggestions) {
+                console.error('roleSuggestions element not found');
+                return;
+            }
+            
+            roleSuggestions.innerHTML = '';
+            roles.forEach(role => {
+                const suggestion = document.createElement('div');
+                suggestion.className = 'autocomplete-suggestion';
+                suggestion.textContent = role;
+                suggestion.addEventListener('click', () => selectSuggestion(role));
+                roleSuggestions.appendChild(suggestion);
+            });
+            
+            roleSuggestions.style.display = 'block';
+            console.log('Suggestions displayed, element style:', roleSuggestions.style.display);
+            console.log('Suggestions container:', roleSuggestions);
+        }
+        
+        function hideSuggestions() {
+            if (roleSuggestions) {
+                roleSuggestions.style.display = 'none';
+                console.log('Suggestions hidden');
+            }
+            currentHighlightIndex = -1;
+        }
+        
+        function updateHighlight(suggestions) {
+            suggestions.forEach((suggestion, index) => {
+                suggestion.classList.toggle('highlighted', index === currentHighlightIndex);
+            });
+        }
+        
+        function selectSuggestion(role) {
+            roleInput.value = role;
+            hideSuggestions();
+        }
+
+        // Drag and drop functionality
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileUpload(files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileUpload(e.target.files[0]);
+            }
+        });
+
+        function handleFileUpload(file) {
+            const formData = new FormData();
+            const selectedRole = roleInput.value || 'general';
+            
+            formData.append('resume', file);
+            formData.append('role', selectedRole);
+
+            showLoading();
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                if (data.success) {
+                    displayResults(data);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                alert('Error uploading file: ' + error.message);
+            });
+        }
+
+        function analyzeText() {
+            const text = document.getElementById('resumeText').value.trim();
+            const selectedRole = roleInput.value || 'general';
+            
+            if (!text) {
+                alert('Please enter some resume text to analyze.');
+                return;
+            }
+
+            showLoading();
+
+            fetch('/analyze', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ 
+                    text: text,
+                    role: selectedRole 
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                hideLoading();
+                if (data.success) {
+                    displayResults(data);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                hideLoading();
+                alert('Error analyzing text: ' + error.message);
+            });
+        }
+
+        function showLoading() {
+            loadingSpinner.style.display = 'block';
+            results.style.display = 'none';
+        }
+
+        function hideLoading() {
+            loadingSpinner.style.display = 'none';
+        }
+
+        function displayResults(data) {
+            const { score, factors, suggestions, role } = data;
+
+            // Update score with animation
+            const scoreValue = document.getElementById('scoreValue');
+            const scoreCircle = document.getElementById('scoreCircle');
+            const scoreDescription = document.getElementById('scoreDescription');
+
+            // Animate score counting
+            animateScore(scoreValue, score);
+
+            const roleText = role && role !== 'general' ? ` for ${role.charAt(0).toUpperCase() + role.slice(1)} positions` : '';
+
+            if (score >= 80) {
+                scoreCircle.className = 'score-circle score-excellent';
+                scoreDescription.textContent = `Excellent! Your resume is well-optimized for ATS${roleText}.`;
+            } else if (score >= 60) {
+                scoreCircle.className = 'score-circle score-good';
+                scoreDescription.textContent = `Good score! Some improvements can boost your ATS compatibility${roleText}.`;
+            } else {
+                scoreCircle.className = 'score-circle score-poor';
+                scoreDescription.textContent = `Needs improvement. Follow the suggestions to enhance your resume${roleText}.`;
+            }
+
+            // Display enhanced factors
+            displayEnhancedFactors(factors);
+
+            // Display enhanced AI insights
+            displayEnhancedInsights(suggestions, factors, score, role);
+
+            // Show results with smooth animation
+            results.style.display = 'block';
+            results.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function animateScore(element, targetScore) {
+            let currentScore = 0;
+            const increment = targetScore / 50;
+            const timer = setInterval(() => {
+                currentScore += increment;
+                if (currentScore >= targetScore) {
+                    currentScore = targetScore;
+                    clearInterval(timer);
+                }
+                element.textContent = Math.round(currentScore);
+            }, 30);
+        }
+
+        function displayEnhancedFactors(factors) {
+            const factorsContainer = document.getElementById('factorsContainer');
+            
+            const contactScore = (factors.email ? 10 : 0) + (factors.phone ? 10 : 0);
+            const sectionsScore = factors.sections_found ? factors.sections_found.length * 10 : 0;
+            const keywordsScore = factors.keywords_found ? Math.min(factors.keywords_found.length * 2, 25) : 0;
+            const achievementsScore = factors.quantifiable_achievements ? Math.min(factors.quantifiable_achievements * 3, 15) : 0;
+
+            factorsContainer.innerHTML = `
+                <div class="factor-grid">
+                    <div class="factor-card">
+                        <div class="factor-score">${contactScore}/20</div>
+                        <div class="factor-label">Contact Info</div>
+                        <div class="progress-indicator">
+                            <div class="progress-bar-custom" style="width: ${(contactScore/20)*100}%"></div>
+                        </div>
+                        <div class="factor-details">
+                            Email: ${factors.email ? '✓' : '✗'} • Phone: ${factors.phone ? '✓' : '✗'}
+                        </div>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <div class="factor-score">${Math.min(sectionsScore, 40)}/40</div>
+                        <div class="factor-label">Resume Sections</div>
+                        <div class="progress-indicator">
+                            <div class="progress-bar-custom" style="width: ${(Math.min(sectionsScore, 40)/40)*100}%"></div>
+                        </div>
+                        <div class="factor-details">
+                            ${factors.sections_found ? factors.sections_found.length : 0} key sections found
+                        </div>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <div class="factor-score">${keywordsScore}/25</div>
+                        <div class="factor-label">Keywords</div>
+                        <div class="progress-indicator">
+                            <div class="progress-bar-custom" style="width: ${(keywordsScore/25)*100}%"></div>
+                        </div>
+                        <div class="factor-details">
+                            ${factors.keywords_found ? factors.keywords_found.length : 0} relevant keywords
+                        </div>
+                    </div>
+                    
+                    <div class="factor-card">
+                        <div class="factor-score">${achievementsScore}/15</div>
+                        <div class="factor-label">Achievements</div>
+                        <div class="progress-indicator">
+                            <div class="progress-bar-custom" style="width: ${(achievementsScore/15)*100}%"></div>
+                        </div>
+                        <div class="factor-details">
+                            ${factors.quantifiable_achievements || 0} quantified results
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayEnhancedInsights(suggestions, factors, score, role) {
+            const suggestionsContainer = document.getElementById('suggestionsContainer');
+            
+            // Parse suggestions and create categorized insights
+            const insights = parseAIInsights(suggestions, factors, score);
+            
+            suggestionsContainer.innerHTML = `
+                <div class="insights-tabs">
+                    <div class="insights-tab active" data-tab="priority">🔥 Priority Actions</div>
+                    <div class="insights-tab" data-tab="content">📝 Content</div>
+                    <div class="insights-tab" data-tab="format">🎨 Formatting</div>
+                    <div class="insights-tab" data-tab="keywords">🔍 Keywords</div>
+                </div>
+                
+                <div class="insights-content active" id="priority-content">
+                    ${insights.priority.map(insight => createInsightCard(insight)).join('')}
+                </div>
+                
+                <div class="insights-content" id="content-content">
+                    ${insights.content.map(insight => createInsightCard(insight)).join('')}
+                </div>
+                
+                <div class="insights-content" id="format-content">
+                    ${insights.format.map(insight => createInsightCard(insight)).join('')}
+                </div>
+                
+                <div class="insights-content" id="keywords-content">
+                    ${insights.keywords.map(insight => createInsightCard(insight)).join('')}
+                </div>
+            `;
+            
+            // Add tab switching functionality
+            setupInsightTabs();
+        }
+
+        function parseAIInsights(suggestions, factors, score) {
+            // Create structured insights based on the AI suggestions and factors
+            const insights = {
+                priority: [],
+                content: [],
+                format: [],
+                keywords: []
+            };
+
+            // Priority insights based on score
+            if (score < 60) {
+                insights.priority.push({
+                    icon: 'fas fa-exclamation-triangle',
+                    title: 'Critical Score Alert',
+                    description: 'Your ATS score is below the recommended threshold. Focus on the high-priority improvements below.',
+                    priority: 'high',
+                    actions: ['Review missing sections', 'Add contact information', 'Include relevant keywords']
+                });
+            }
+
+            // Contact information insights
+            if (!factors.email || !factors.phone) {
+                insights.priority.push({
+                    icon: 'fas fa-address-card',
+                    title: 'Missing Contact Information',
+                    description: `${!factors.email ? 'Email address' : ''} ${!factors.email && !factors.phone ? 'and' : ''} ${!factors.phone ? 'phone number' : ''} not found. This is essential for recruiters.`,
+                    priority: 'high',
+                    actions: ['Add professional email', 'Include phone number', 'Consider LinkedIn profile']
+                });
+            }
+
+            // Keywords insights
+            if (!factors.keywords_found || factors.keywords_found.length < 5) {
+                insights.keywords.push({
+                    icon: 'fas fa-search',
+                    title: 'Keyword Optimization Needed',
+                    description: 'Your resume lacks industry-specific keywords that ATS systems look for.',
+                    priority: 'high',
+                    actions: ['Research job descriptions', 'Add technical skills', 'Include industry terms']
+                });
+            }
+
+            // Achievements insights
+            if (!factors.quantifiable_achievements || factors.quantifiable_achievements < 3) {
+                insights.content.push({
+                    icon: 'fas fa-chart-line',
+                    title: 'Add Quantifiable Achievements',
+                    description: 'Include specific numbers, percentages, and metrics to demonstrate your impact.',
+                    priority: 'medium',
+                    actions: ['Add percentages', 'Include dollar amounts', 'Mention team sizes', 'Show growth metrics']
+                });
+            }
+
+            // AI suggestions parsing
+            const suggestionLines = suggestions.split('\n').filter(line => line.trim());
+            suggestionLines.forEach(line => {
+                if (line.toLowerCase().includes('format') || line.toLowerCase().includes('layout')) {
+                    insights.format.push({
+                        icon: 'fas fa-palette',
+                        title: 'Formatting Improvement',
+                        description: line.trim(),
+                        priority: 'low',
+                        actions: ['Review formatting', 'Check consistency']
+                    });
+                } else if (line.toLowerCase().includes('keyword') || line.toLowerCase().includes('skill')) {
+                    insights.keywords.push({
+                        icon: 'fas fa-tags',
+                        title: 'Keyword Enhancement',
+                        description: line.trim(),
+                        priority: 'medium',
+                        actions: ['Research keywords', 'Update skills section']
+                    });
+                } else {
+                    insights.content.push({
+                        icon: 'fas fa-edit',
+                        title: 'Content Improvement',
+                        description: line.trim(),
+                        priority: 'medium',
+                        actions: ['Review content', 'Make updates']
+                    });
+                }
+            });
+
+            return insights;
+        }
+
+        function createInsightCard(insight) {
+            return `
+                <div class="insight-card">
+                    <div class="insight-priority priority-${insight.priority}">${insight.priority}</div>
+                    <div class="insight-header">
+                        <div class="insight-icon">
+                            <i class="${insight.icon}"></i>
+                        </div>
+                        <h4 class="insight-title">${insight.title}</h4>
+                    </div>
+                    <div class="insight-description">${insight.description}</div>
+                    <div class="insight-actions">
+                        ${insight.actions.map(action => `<span class="insight-action">${action}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function setupInsightTabs() {
+            const tabs = document.querySelectorAll('.insights-tab');
+            const contents = document.querySelectorAll('.insights-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    contents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    
+                    // Show corresponding content
+                    const targetContent = document.getElementById(`${tab.dataset.tab}-content`);
+                    if (targetContent) {
+                        targetContent.classList.add('active');
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
