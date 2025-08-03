@@ -119,10 +119,6 @@ ats-resume-scanner/
 3. Make your changes
 4. Submit a pull request
 
-## License
-
-This project is open source and available under the MIT License.
-
 ## Support
 
 For issues and questions, please create an issue in the repository or contact the development team.
