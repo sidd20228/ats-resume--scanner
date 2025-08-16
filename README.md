@@ -121,4 +121,4 @@ ats-resume-scanner/
 
 ## Support
 
-For issues and questions, please create an issue in the repository or contact the development team.
+For issues and questions, please create an issue in the repository or contact me.
